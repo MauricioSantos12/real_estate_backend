@@ -42,6 +42,12 @@ const UsersController = {
       if (!parsedData.success) {
         return res.status(400).json({ errors: parsedData.error });
       }
+      const existingUser = await UsersModel.getUserByEmail(
+        parsedData.data.email
+      );
+      if (existingUser) {
+        return res.status(409).json({ error: "Email already in use" });
+      }
       const newUser = await UsersModel.createUser(parsedData.data);
       res.status(201).json(newUser);
     } catch (error) {
@@ -61,6 +67,11 @@ const UsersController = {
       if (!parsedData.success) {
         return res.status(400).json({ errors: parsedData.error.errors });
       }
+      const existingUser = await UsersModel.getUserById(parsedId.data);
+      if (!existingUser) {
+        return res.status(409).json({ error: "User not found" });
+      }
+
       const updatedUser = await UsersModel.updateUser(
         parsedId.data,
         parsedData.data
@@ -81,6 +92,10 @@ const UsersController = {
       const parsedId = idSchema.safeParse(req.params.id);
       if (!parsedId.success) {
         return res.status(400).json({ errors: parsedId.error.errors });
+      }
+      const existingUser = await UsersModel.getUserById(parsedId.data);
+      if (!existingUser) {
+        return res.status(409).json({ error: "User not found" });
       }
       const deleted = await UsersModel.deleteUser(parsedId.data);
       if (!deleted) {

@@ -13,6 +13,18 @@ const UsersModel = {
     return rows[0]; // Return the first row or undefined if not found
   },
 
+  async getUserByEmail(email) {
+    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
+      email,
+    ]);
+    return rows[0]; // Return the first row or undefined if not found
+  },
+
+  async getUserById(id) {
+    const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
+    return rows[0]; // Return the first row or undefined if not found
+  },
+
   // Create a new user
   async createUser({ name, email, is_anonymous }) {
     const [result] = await pool.query(
@@ -23,22 +35,23 @@ const UsersModel = {
   },
 
   // Update a user
-  async updateUser(id, { name, email, is_anonymous }) {
+  async updateUser(id, updates) {
+    const setClause = Object.entries(updates)
+      .map(([key, value]) => `${key} = COALESCE(?, ${key})`)
+      .join(", ");
     const [result] = await pool.query(
-      `UPDATE users SET 
-        name = COALESCE(?, name), 
-        email = COALESCE(?, email), 
-        is_anonymous = COALESCE(?, is_anonymous), 
-        updated_at = CURRENT_TIMESTAMP 
-      WHERE id = ?`,
-      [name, email, is_anonymous, id]
+      `UPDATE users SET ${setClause} WHERE id = ?`,
+      [...Object.values(updates), id]
     );
-    return result.affectedRows > 0 ? { id, name, email, is_anonymous } : null;
+    return result.affectedRows > 0 ? { id, ...updates } : null;
   },
 
   // Delete a user
   async deleteUser(id) {
-    const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
+    const [result] = await pool.query(
+      "UPDATE users SET is_active = 0 WHERE id = ?",
+      [id]
+    );
     return result.affectedRows > 0;
   },
 };

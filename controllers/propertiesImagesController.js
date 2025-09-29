@@ -16,6 +16,13 @@ const PropertiesController = {
   async createPropertyImage(req, res) {
     try {
       const parsedData = propertyImageSchema.safeParse(req.body);
+      const existingProperty =
+        await PropiertiesImagesModel.getPropertyImageByImage(
+          parsedData.data.image_url
+        );
+      if (existingProperty) {
+        return res.status(409).json({ error: "Image already in use" });
+      }
       if (!parsedData.success) {
         return res.status(400).json({ errors: parsedData.error.errors });
       }
@@ -39,9 +46,9 @@ const PropertiesController = {
         parsedId.data
       );
       if (!deleted) {
-        return res.status(404).json({ error: "Property not found" });
+        return res.status(404).json({ error: "Property image not found" });
       }
-      res.status(204).send(); // No content for successful deletion
+      res.status(200).json({ message: "Property Image deleted successfully" });
     } catch (error) {
       console.error("Error deleting property:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -56,7 +63,7 @@ const PropertiesController = {
       }
       const parsedData = propertyImageSchema.safeParse(req.body);
       if (!parsedData.success) {
-        return res.status(400).json({ errors: parsedData.error.errors });
+        return res.status(400).json({ errors: parsedData.error });
       }
       const updatedProperty = await PropiertiesImagesModel.updatePropertyImage(
         parsedId.data,
