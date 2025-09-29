@@ -1,4 +1,6 @@
 const CommentsModel = require("../models/commentsModel");
+const { commentSchema } = require("../schemas/commentsSchema");
+const { idSchema } = require("../schemas/usersSchema");
 
 const CommentsController = {
   // Get all comments
@@ -51,7 +53,7 @@ const CommentsController = {
       if (!parsedId.success) {
         return res.status(400).json({ errors: parsedId.error.errors });
       }
-      const parsedData = commentUpdateSchema.safeParse(req.body);
+      const parsedData = commentSchema.safeParse(req.body);
       if (!parsedData.success) {
         return res.status(400).json({ errors: parsedData.error.errors });
       }

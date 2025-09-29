@@ -4,56 +4,56 @@ const PropertiesModel = {
   // Get all properties
   async getAllProperties() {
     const [rows] = await pool.query(`
-            SELECT p.*, pt.type_name 
-            FROM properties p 
-            JOIN property_types pt ON p.property_type_id = pt.id
+            SELECT * 
+            FROM properties
         `);
     return rows;
   },
 
-  // Create a new property
-  async createProperty({
-    user_id,
-    property_type_id,
-    title,
-    description,
-    price,
-    address,
-    city,
-    state,
-    zip_code,
-    bedrooms,
-    bathrooms,
-    area_sqft,
-    status = "for_sale",
-  }) {
-    try {
-      const [result] = await pool.query(
-        `INSERT INTO properties (
-            user_id, property_type_id, title, description, price, address, city, state, 
-            zip_code, bedrooms, bathrooms, area_sqft, status
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          user_id,
-          property_type_id,
-          title,
-          description,
-          price,
-          address,
-          city,
-          state,
-          zip_code,
-          bedrooms,
-          bathrooms,
-          area_sqft,
-          status,
-        ]
-      );
+  async getPropertyByTitle(title) {
+    const [rows] = await pool.query(
+      `
+            SELECT * 
+            FROM properties
+            WHERE title = ?
+        `,
+      [title]
+    );
+    return rows[0];
+  },
 
-      res.status(201).json({ id: result.insertId, ...req.body });
+  // Create a new property
+  async createProperty(data) {
+    const fields = Object.keys(data);
+    const values = fields.map((key) => data[key]);
+    try {
+      const query = `INSERT INTO properties (${fields.join(
+        ", "
+      )}) VALUES (${fields.map(() => "?").join(", ")})`;
+      const [result] = await pool.query(query, values);
+      return result.affectedRows > 0 ? { id: result.insertId, ...data } : null;
     } catch (error) {
       console.error("Error creating property:", error);
-      res.status(500).json({ error: "Internal server error" });
+      throw error;
+    }
+  },
+
+  async updateProperty(propertyId, updateData) {
+    try {
+      const fields = [];
+      const values = [];
+      for (const [key, value] of Object.entries(updateData)) {
+        fields.push(`${key} = ?`);
+        values.push(value);
+      }
+      const [result] = await pool.query(
+        `UPDATE properties SET ${fields.join(", ")} WHERE id = ?`,
+        [...values, propertyId]
+      );
+      return result.affectedRows > 0 ? { id: propertyId, ...updateData } : null;
+    } catch (error) {
+      console.error("Error updating property:", error);
+      return null;
     }
   },
 };

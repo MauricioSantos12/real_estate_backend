@@ -11,22 +11,30 @@ const CommentsModel = {
     ]);
     return rows[0]; // Return the first row or undefined if not found
   },
-  async createComment({ user_id, property_id, comment }) {
+  async createComment(data) {
+    const columns = Object.keys(data);
+    const values = columns.map((key) => data[key]);
     const [result] = await pool.query(
-      "INSERT INTO comments (user_id, property_id, comment) VALUES (?, ?, ?)",
-      [user_id, property_id, comment]
+      `INSERT INTO comments (${columns.join(", ")}) VALUES (${columns
+        .map(() => "?")
+        .join(", ")})`,
+      values
     );
-    return { id: result.insertId, user_id, property_id, comment };
+    return { id: result.insertId, ...data };
   },
-  async updateComment(id, { user_id, property_id, comment }) {
+
+  async updateComment(id, data) {
+    const columns = Object.keys(data);
+    const values = columns.map((key) => data[key]);
     const [result] = await pool.query(
-      "UPDATE comments SET user_id = ?, property_id = ?, comment = ? WHERE id = ?",
-      [user_id, property_id, comment, id]
+      `UPDATE comments SET ${columns
+        .map((key) => `${key} = ?`)
+        .join(", ")} WHERE id = ?`,
+      [...values, id]
     );
-    return result.affectedRows > 0
-      ? { id, user_id, property_id, comment }
-      : null;
+    return result.affectedRows > 0 ? { id, ...data } : null;
   },
+
   async deleteComment(id) {
     const [result] = await pool.query("DELETE FROM comments WHERE id = ?", [
       id,
