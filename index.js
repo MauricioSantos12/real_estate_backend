@@ -4,6 +4,7 @@ require("dotenv").config();
 const usersRouter = require("./routes/users");
 const propertiesRouter = require("./routes/properties");
 const propertiesImagesRouter = require("./routes/propertiesImages");
+const propertiesStatusRouter = require("./routes/propertiesStatus");
 const commentsRouter = require("./routes/comments");
 const { swaggerUi, swaggerSpec } = require("./swagger");
 const app = express();
@@ -17,6 +18,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/users", usersRouter);
 app.use("/api/properties", propertiesRouter);
 app.use("/api/properties/images", propertiesImagesRouter);
+app.use("/api/properties/status", propertiesStatusRouter);
 app.use("/api/comments", commentsRouter);
 
 app.get("/", (req, res) => {
