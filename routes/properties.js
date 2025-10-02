@@ -33,6 +33,8 @@ router.get("/", PropertiesController.getAllProperties);
  *   post:
  *     summary: Create a new property
  *     tags: [Properties]
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:
@@ -62,6 +64,8 @@ router.post("/", PropertiesController.createProperty);
  *         schema:
  *           type: integer
  *         description: Property ID
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:

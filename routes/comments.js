@@ -121,6 +121,8 @@ router.get("/:id", CommentsController.getComment);
  *         schema:
  *           type: integer
  *         description: Comment ID
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:
@@ -141,6 +143,8 @@ router.put("/:id", CommentsController.updateComment);
  *   delete:
  *     summary: Delete a comment
  *     tags: [Comments]
+ *     security:
+ *       - bearerAuth: []   #
  *     parameters:
  *       - in: path
  *         name: id

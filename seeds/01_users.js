@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 exports.seed = async function (knex) {
   await knex("users").del();
   await knex("users").insert([
@@ -8,6 +10,7 @@ exports.seed = async function (knex) {
       role: "user",
       is_active: true,
       is_anonymous: false,
+      password: await bcrypt.hash("password", saltRounds),
     },
     {
       id: 2,
@@ -16,6 +19,7 @@ exports.seed = async function (knex) {
       role: "admin",
       is_active: true,
       is_anonymous: false,
+      password: await bcrypt.hash("password", saltRounds),
     },
   ]);
 };

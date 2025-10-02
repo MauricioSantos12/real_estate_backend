@@ -24,7 +24,7 @@ const PropertiesController = {
         return res.status(409).json({ error: "Image already in use" });
       }
       if (!parsedData.success) {
-        return res.status(400).json({ errors: parsedData.error.errors });
+        return res.status(400).json({ errors: parsedData.error });
       }
       const newProperty = await PropiertiesImagesModel.createPropertyImage(
         parsedData.data
@@ -40,7 +40,7 @@ const PropertiesController = {
     try {
       const parsedId = idSchema.safeParse(req.params.id);
       if (!parsedId.success) {
-        return res.status(400).json({ errors: parsedId.error.errors });
+        return res.status(400).json({ errors: parsedId.error });
       }
       const deleted = await PropiertiesImagesModel.deletePropertyImage(
         parsedId.data
@@ -59,7 +59,7 @@ const PropertiesController = {
     try {
       const parsedId = idSchema.safeParse(req.params.id);
       if (!parsedId.success) {
-        return res.status(400).json({ errors: parsedId.error.errors });
+        return res.status(400).json({ errors: parsedId.error });
       }
       const parsedData = propertyImageSchema.safeParse(req.body);
       if (!parsedData.success) {

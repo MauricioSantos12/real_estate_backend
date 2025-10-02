@@ -42,6 +42,13 @@ const options = {
           required: ["user_id", "property_type_id"],
         },
       },
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
     },
     servers: [
       {

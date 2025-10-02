@@ -2,8 +2,21 @@ const pool = require("../db");
 
 const CommentsModel = {
   async getAllComments() {
-    const [rows] = await pool.query("SELECT * FROM comments");
-    return rows;
+    const [rows] = await pool.query(`
+      SELECT c.*, u.name AS user_name, u.email AS user_email, u.id AS user_id
+      FROM comments c
+      INNER JOIN users u ON c.user_id = u.id
+    `);
+    return rows
+      .map((row) => ({
+        ...row,
+        user: {
+          name: row.user_name,
+          email: row.user_email,
+          id: row.user_id,
+        },
+      }))
+      .map(({ user_email, user_name, user_id, ...rest }) => rest);
   },
   async getCommentById(id) {
     const [rows] = await pool.query("SELECT * FROM comments WHERE id = ?", [

@@ -18,11 +18,11 @@ const PropertiesStatusController = {
     try {
       const parsedId = idSchema.safeParse(req.params.id);
       if (!parsedId.success) {
-        return res.status(400).json({ errors: parsedId.error.errors });
+        return res.status(400).json({ errors: parsedId.error });
       }
       const parsedData = propertiesStatusSchema.safeParse(req.body);
       if (!parsedData.success) {
-        return res.status(400).json({ errors: parsedData.error.errors });
+        return res.status(400).json({ errors: parsedData.error });
       }
       const updatedData = await PropertiesStatusModel.update(
         parsedId.data,

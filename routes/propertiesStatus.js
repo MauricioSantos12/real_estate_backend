@@ -62,6 +62,8 @@ router.get("/", PropertiesStatusController.getAllData);
  *         schema:
  *           type: integer
  *         description: Property status ID
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:

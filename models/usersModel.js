@@ -3,8 +3,18 @@ const pool = require("../db");
 const UsersModel = {
   // Get all users
   async getAllUsers() {
-    const [rows] = await pool.query("SELECT * FROM users");
-    return rows;
+    const [rows] = await pool.query(
+      "SELECT id, name, email, is_anonymous, is_active, role FROM users"
+    );
+
+    return rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      is_anonymous: row.is_anonymous,
+      is_active: row.is_active,
+      role: row.role,
+    }));
   },
 
   // Get a user by ID
@@ -26,14 +36,15 @@ const UsersModel = {
   },
 
   // Create a new user
-  async createUser({ name, email, is_anonymous }) {
-    const [result] = await pool.query(
-      "INSERT INTO users (name, email, is_anonymous) VALUES (?, ?, ?)",
-      [name, email, is_anonymous !== undefined ? is_anonymous : 1]
-    );
-    return { id: result.insertId, name, email, is_anonymous };
+  async createUser(data) {
+    const fields = Object.keys(data);
+    const values = fields.map((key) => data[key]);
+    const query = `INSERT INTO users (${fields.join(", ")}) VALUES (${fields
+      .map(() => "?")
+      .join(", ")})`;
+    const [result] = await pool.query(query, values);
+    return { id: result.insertId, ...data };
   },
-
   // Update a user
   async updateUser(id, updates) {
     const setClause = Object.entries(updates)

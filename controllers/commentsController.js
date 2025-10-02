@@ -19,7 +19,7 @@ const CommentsController = {
     try {
       const parsedData = commentSchema.safeParse(req.body);
       if (!parsedData.success) {
-        return res.status(400).json({ errors: parsedData.error.errors });
+        return res.status(400).json({ errors: parsedData.error });
       }
       const newComment = await CommentsModel.createComment(parsedData.data);
       res.status(201).json(newComment);
@@ -34,7 +34,7 @@ const CommentsController = {
     try {
       const parsedId = idSchema.safeParse(req.params.id);
       if (!parsedId.success) {
-        return res.status(400).json({ errors: parsedId.error.errors });
+        return res.status(400).json({ errors: parsedId.error });
       }
       const comment = await CommentsModel.getCommentById(parsedId.data);
       if (!comment) {
@@ -51,11 +51,11 @@ const CommentsController = {
     try {
       const parsedId = idSchema.safeParse(req.params.id);
       if (!parsedId.success) {
-        return res.status(400).json({ errors: parsedId.error.errors });
+        return res.status(400).json({ errors: parsedId.error });
       }
       const parsedData = commentSchema.safeParse(req.body);
       if (!parsedData.success) {
-        return res.status(400).json({ errors: parsedData.error.errors });
+        return res.status(400).json({ errors: parsedData.error });
       }
       const updatedComment = await CommentsModel.updateComment(
         parsedId.data,
@@ -75,7 +75,7 @@ const CommentsController = {
     try {
       const parsedId = idSchema.safeParse(req.params.id);
       if (!parsedId.success) {
-        return res.status(400).json({ errors: parsedId.error.errors });
+        return res.status(400).json({ errors: parsedId.error });
       }
       const deleted = await CommentsModel.deleteComment(parsedId.data);
       if (!deleted) {

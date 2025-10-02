@@ -42,7 +42,7 @@ const PropertiesController = {
       const propertyId = req.params.id;
       const parsedData = propertySchema.partial().safeParse(req.body);
       if (!parsedData.success) {
-        return res.status(400).json({ errors: parsedData.error.errors });
+        return res.status(400).json({ errors: parsedData.error });
       }
       const updatedProperty = await PropiertiesModel.updateProperty(
         propertyId,

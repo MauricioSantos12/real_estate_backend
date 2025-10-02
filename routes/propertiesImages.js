@@ -27,6 +27,8 @@ router.get("/", PropertiesImagesController.getAllPropertiesImages);
  *   post:
  *     summary: Create a new property image
  *     tags: [Property Images]
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:
@@ -59,6 +61,8 @@ router.post("/", PropertiesImagesController.createPropertyImage);
  *   delete:
  *     summary: Delete a property image by ID
  *     tags: [Property Images]
+ *     security:
+ *       - bearerAuth: []   #
  *     parameters:
  *       - in: path
  *         name: id
@@ -89,6 +93,8 @@ router.delete("/:id", PropertiesImagesController.deletePropertyImage);
  *           type: integer
  *         example: 1
  *         description: Property image ID
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:

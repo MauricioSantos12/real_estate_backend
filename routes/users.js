@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const UsersController = require("../controllers/userController");
-
+const auth = require("../middleware/auth");
 /**
  * @swagger
  * tags:
@@ -78,6 +78,8 @@ router.get("/:id", UsersController.getUser);
  *   post:
  *     summary: Create a new user
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:
@@ -87,8 +89,7 @@ router.get("/:id", UsersController.getUser);
  *             required:
  *               - name
  *               - email
- *               - is_anonymous
- *               - is_active
+ *               - password
  *               - role
  *             properties:
  *               name:
@@ -97,22 +98,25 @@ router.get("/:id", UsersController.getUser);
  *               email:
  *                 type: string
  *                 example: mauricio@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *               role:
+ *                 type: string
+ *                 example: customer
  *               is_anonymous:
  *                 type: boolean
  *                 example: false
  *               is_active:
  *                 type: boolean
  *                 example: true
- *               role:
- *                 type: string
- *                 example: customer
  *     responses:
  *       201:
  *         description: User created successfully
  *       400:
  *         description: Invalid request
  */
-router.post("/", UsersController.createUser);
+router.post("/", auth, UsersController.createUser);
 
 /**
  * @swagger
@@ -127,6 +131,8 @@ router.post("/", UsersController.createUser);
  *         schema:
  *           type: integer
  *         description: The user ID
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:
@@ -152,14 +158,16 @@ router.post("/", UsersController.createUser);
  *       404:
  *         description: User not found
  */
-router.put("/:id", UsersController.updateUser);
+router.put("/:id", auth, UsersController.updateUser);
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   delete:
  *     summary: Delete a user
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []   #
  *     parameters:
  *       - in: path
  *         name: id
@@ -173,6 +181,36 @@ router.put("/:id", UsersController.updateUser);
  *       404:
  *         description: User not found
  */
-router.delete("/:id", UsersController.deleteUser);
+router.delete("/:id", auth, UsersController.deleteUser);
+
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: jane@example.com
+ *               password:
+ *                 type: string
+ *                 example: password
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *       404:
+ *         description: User not found
+ */
+router.post("/login", UsersController.loginUser);
 
 module.exports = router;

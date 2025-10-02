@@ -3,6 +3,7 @@ const { z } = require("zod");
 const userSchema = z.object({
   name: z.string().max(100),
   email: z.string().email().max(100),
+  password: z.string().min(6).max(100).optional(),
   is_anonymous: z.boolean(),
   is_active: z.boolean(),
   role: z.enum(["admin", "agent", "customer"]),
@@ -13,6 +14,7 @@ const userUpdateSchema = z.object({
   email: z.string().email().max(100).optional(),
   is_anonymous: z.boolean().optional(),
   is_active: z.boolean().optional(),
+  role: z.enum(["admin", "agent", "customer"]).optional(),
 });
 const idSchema = z
   .string()

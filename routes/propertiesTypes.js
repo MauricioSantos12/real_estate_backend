@@ -62,6 +62,8 @@ router.get("/", PropertiesTypesController.getAllData);
  *         schema:
  *           type: integer
  *         description: Property types ID
+ *     security:
+ *       - bearerAuth: []   #
  *     requestBody:
  *       required: true
  *       content:
