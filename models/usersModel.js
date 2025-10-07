@@ -59,10 +59,7 @@ const UsersModel = {
 
   // Delete a user
   async deleteUser(id) {
-    const [result] = await pool.query(
-      "UPDATE users SET is_active = 0 WHERE id = ?",
-      [id]
-    );
+    const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
     return result.affectedRows > 0;
   },
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const PropertiesController = require("../controllers/propertiesController");
+const auth = require("../middleware/auth");
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/", PropertiesController.getAllProperties);
  *             schema:
  *               $ref: '#/components/schemas/Property'
  */
-router.post("/", PropertiesController.createProperty);
+router.post("/", auth, PropertiesController.createProperty);
 
 /**
  * @swagger
@@ -80,6 +81,27 @@ router.post("/", PropertiesController.createProperty);
  *             schema:
  *               $ref: '#/components/schemas/Property'
  */
-router.put("/:id", PropertiesController.updateProperty);
+router.put("/:id", auth, PropertiesController.updateProperty);
+
+/**
+ * @swagger
+ * /properties/{id}:
+ *   delete:
+ *     summary: Delete a property
+ *     tags: [Properties]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Property ID
+ *     security:
+ *       - bearerAuth: []   #
+ *     responses:
+ *       200:
+ *         description: Property deleted successfully
+ */
+router.delete("/:id", auth, PropertiesController.deleteProperty);
 
 module.exports = router;

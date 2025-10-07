@@ -4,7 +4,8 @@ const PropertiesModel = {
   // Get all properties
   async getAllProperties() {
     const [rows] = await pool.query(`
-            SELECT p.*, ps.name as status_name, u.name as user_name, pt.name as property_type_name 
+            SELECT p.*, ps.name as status_name, u.name as user_name, pt.name as property_type_name,
+            (SELECT GROUP_CONCAT(image_url, ',', caption, ',', is_primary) FROM property_images WHERE property_id = p.id) as image_urls
             FROM properties p
             LEFT JOIN property_statuses ps ON p.status_id = ps.id
             LEFT JOIN users u ON p.user_id = u.id
@@ -19,6 +20,22 @@ const PropertiesModel = {
           id: row.property_type_id,
           name: row.property_type_name,
         },
+        image_urls: row.image_urls
+          ? {
+              images: row.image_urls
+                .split(",")
+                .reduce((acc, curr, index, arr) => {
+                  if (index % 3 === 0) {
+                    acc.push({
+                      image_url: curr,
+                      caption: arr[index + 1],
+                      is_primary: arr[index + 2] === "1",
+                    });
+                  }
+                  return acc;
+                }, []),
+            }
+          : [],
       }))
       .map(({ status_name, user_name, property_type_name, ...rest }) => rest);
   },
@@ -66,6 +83,18 @@ const PropertiesModel = {
     } catch (error) {
       console.error("Error updating property:", error);
       return null;
+    }
+  },
+
+  async deleteProperty(propertyId) {
+    try {
+      const [result] = await pool.query(`DELETE FROM properties WHERE id = ?`, [
+        propertyId,
+      ]);
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error("Error deleting property:", error);
+      return false;
     }
   },
 };

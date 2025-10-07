@@ -162,7 +162,7 @@ router.put("/:id", auth, UsersController.updateUser);
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   delete:
  *     summary: Delete a user
  *     tags: [Users]
