@@ -12,6 +12,22 @@ const PropertiesController = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
+  // Get specific Property
+  async getPropertyById(req, res) {
+    try {
+      const propertyId = req.params.id;
+      const property = await PropiertiesModel.getPropertyById(propertyId);
+      if (!property) {
+        return res.status(404).json({ error: "Get: Property not found" });
+      }
+      res.json(property);
+    } catch (error) {
+      console.error("Error fetching property:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
+
   // Create a new property
   async createProperty(req, res) {
     try {
@@ -49,7 +65,7 @@ const PropertiesController = {
         parsedData.data
       );
       if (!updatedProperty) {
-        return res.status(404).json({ error: "Property not found" });
+        return res.status(404).json({ error: "Update: Property not found" });
       }
       res.json(updatedProperty);
     } catch (error) {
@@ -63,7 +79,7 @@ const PropertiesController = {
       const propertyId = req.params.id;
       const deleted = await PropiertiesModel.deleteProperty(propertyId);
       if (!deleted) {
-        return res.status(404).json({ error: "Property not found" });
+        return res.status(404).json({ error: "Delete: Property not found" });
       }
       res.status(200).json({ message: "Property deleted successfully" });
     } catch (error) {

@@ -39,6 +39,48 @@ const PropertiesModel = {
       }))
       .map(({ status_name, user_name, property_type_name, ...rest }) => rest);
   },
+
+  async getPropertyById(id) {
+    const [rows] = await pool.query(
+      `
+            SELECT p.*, ps.name as status_name, u.name as user_name, pt.name as property_type_name,
+            (SELECT GROUP_CONCAT(image_url, ',', caption, ',', is_primary) FROM property_images WHERE property_id = p.id) as image_urls
+            FROM properties p
+            LEFT JOIN property_statuses ps ON p.status_id = ps.id
+            LEFT JOIN users u ON p.user_id = u.id
+            LEFT JOIN property_types pt ON p.property_type_id = pt.id
+            WHERE p.id = ?
+        `,
+      [id]
+    );
+    if (rows.length === 0) return null;
+    return {
+      ...rows[0],
+      status: { id: rows[0].status_id, name: rows[0].status_name },
+      user: { id: rows[0].user_id, name: rows[0].user_name },
+      property_type: {
+        id: rows[0].property_type_id,
+        name: rows[0].property_type_name,
+      },
+      image_urls: rows[0].image_urls
+        ? {
+            images: rows[0].image_urls
+              .split(",")
+              .reduce((acc, curr, index, arr) => {
+                if (index % 3 === 0) {
+                  acc.push({
+                    image_url: curr,
+                    caption: arr[index + 1],
+                    is_primary: arr[index + 2] === "1",
+                  });
+                }
+                return acc;
+              }, []),
+          }
+        : [],
+    };
+  },
+
   async getPropertyByTitle(title) {
     const [rows] = await pool.query(
       `

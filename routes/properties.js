@@ -30,7 +30,32 @@ router.get("/", PropertiesController.getAllProperties);
 
 /**
  * @swagger
- * /properties:
+ * /properties/property/{id}:
+ *   get:
+ *     summary: Get a property by ID
+ *     tags: [Properties]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Property ID
+ *     responses:
+ *       200:
+ *         description: Property details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Property'
+ *       404:
+ *         description: Properties not found
+ */
+router.get("/property/:id", PropertiesController.getPropertyById);
+
+/**
+ * @swagger
+ * /properties/property/{id}:
  *   post:
  *     summary: Create a new property
  *     tags: [Properties]
@@ -50,6 +75,7 @@ router.get("/", PropertiesController.getAllProperties);
  *             schema:
  *               $ref: '#/components/schemas/Property'
  */
+
 router.post("/", auth, PropertiesController.createProperty);
 
 /**
