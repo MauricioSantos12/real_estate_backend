@@ -8,7 +8,7 @@ exports.seed = async function (knex) {
       status_id: 1, // must exist in status
       title: "Cozy Apartment",
       description: "A nice small apartment in the city center.",
-      icon: "🏠",
+      icon: "UilBuilding",
       price: 120000,
       address: "123 Main St",
       city: "New York",
@@ -26,7 +26,7 @@ exports.seed = async function (knex) {
       status_id: 2,
       title: "Family House",
       description: "Spacious house with a garden.",
-      icon: "🏡",
+      icon: "UilHouse",
       price: 250000,
       address: "456 Elm St",
       city: "Los Angeles",
