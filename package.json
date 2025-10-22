@@ -8,7 +8,8 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "migrate": "knex migrate:latest --env production",
-    "migrate:rollback": "knex migrate:rollback --env production"
+    "migrate:rollback": "knex migrate:rollback --env production",
+    "seed": "knex seed:run --env production"
   },
   "keywords": [],
   "author": "",
