@@ -7,7 +7,7 @@ exports.seed = async function (knex) {
       id: 1,
       name: "John Doe",
       email: "john@example.com",
-      role: "user",
+      role: "agent",
       is_active: true,
       is_anonymous: false,
       password: await bcrypt.hash("password", saltRounds),
